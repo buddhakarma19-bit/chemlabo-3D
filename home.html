@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ChemLab 3D</title>
+
+    <link rel="stylesheet" href="design.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+
+    <header class="topbar">
+
+        <div>
+            <h1>🧪 ChemLab 3D</h1>
+
+            <p>
+                Laboratoire virtuel de chimie — 2 Bac SM
+            </p>
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            Simulation active
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <aside class="sidebar">
+
+            <h2>⚗️ Manipulation</h2>
+
+
+            <label for="experience">
+                Expérience
+            </label>
+
+
+            <select id="experience">
+
+                <option value="">
+                    Choisir...
+                </option>
+
+                <option value="iodure_persulfate">
+                    I⁻ + S₂O₈²⁻
+                </option>
+
+                <option value="hcl_naoh">
+                    HCl + NaOH
+                </option>
+
+                <option value="hcl_caco3">
+                    HCl + CaCO₃
+                </option>
+
+                <option value="hcl_zn">
+                    HCl + Zn
+                </option>
+
+                <option value="zn_cuso4">
+                    Zn + CuSO₄
+                </option>
+
+            </select>
+
+
+            <div class="separator"></div>
+
+
+            <h3>🧰 Matériel</h3>
+
+
+            <div id="inventory">
+
+                <div class="inventory-item">
+                    🧴 Flacon A
+
+                    <span id="materialA">
+                        —
+                    </span>
+                </div>
+
+
+                <div class="inventory-item">
+                    🧴 Flacon B
+
+                    <span id="materialB">
+                        —
+                    </span>
+                </div>
+
+            </div>
+
+
+            <p class="instruction">
+
+                ① Prends un flacon avec la souris<br>
+                ② Déplace-le au-dessus du bécher<br>
+                ③ Relâche pour verser<br>
+                ④ Fais pareil avec le deuxième<br>
+                ⑤ Clique sur Mélanger
+
+            </p>
+
+
+            <button id="melanger">
+                🌀 Mélanger
+            </button>
+
+
+            <button id="resetLab" class="secondary">
+                ↻ Réinitialiser
+            </button>
+
+
+            <div class="separator"></div>
+
+
+            <h3>⚙️ Paramètres</h3>
+
+
+            <label>
+
+                Volume :
+                <span id="volumeValue">
+                    50
+                </span>
+                mL
+
+            </label>
+
+
+            <input id="volume" type="range" min="10" max="100" value="50">
+
+
+            <label>
+
+                Concentration :
+                <span id="concentrationValue">
+                    0.50
+                </span>
+                mol/L
+
+            </label>
+
+
+            <input id="concentration" type="range" min="0.1" max="2" step="0.1" value="0.5">
+
+
+            <label>
+
+                Température :
+                <span id="temperatureValue">
+                    25
+                </span>
+                °C
+
+            </label>
+
+
+            <input id="temperature" type="range" min="10" max="80" value="25">
+
+
+            <div id="resultat">
+
+                <h3>
+                    Résultat
+                </h3>
+
+                <p>
+                    Choisis une expérience.
+                </p>
+
+            </div>
+
+
+            <div class="chem-bot">
+
+                <h3>
+                    🤖 ChemBot
+                </h3>
+
+                <p id="botMessage">
+                    Choisis une expérience.
+                </p>
+
+            </div>
+
+
+            <!-- CHESS CORNER -->
+
+            <div class="chess-corner">
+
+                <div class="chess-header">
+
+                    <span class="chess-icon">
+                        ♟️
+                    </span>
+
+
+                    <div>
+
+                        <h3>
+                            Chess Corner
+                        </h3>
+
+                        <small>
+                            ChemMind Challenge
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chess-board">
+
+                    <div>♜</div>
+                    <div>♞</div>
+                    <div>♝</div>
+                    <div>♛</div>
+                    <div>♚</div>
+                    <div>♝</div>
+                    <div>♞</div>
+                    <div>♜</div>
+
+                    <div>♟</div>
+                    <div>♟</div>
+                    <div>♟</div>
+                    <div>♟</div>
+                    <div>♟</div>
+                    <div>♟</div>
+                    <div>♟</div>
+                    <div>♟</div>
+
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+
+                    <div>♙</div>
+                    <div>♙</div>
+                    <div>♙</div>
+                    <div>♙</div>
+                    <div>♙</div>
+                    <div>♙</div>
+                    <div>♙</div>
+                    <div>♙</div>
+
+
+                    <div>♖</div>
+                    <div>♘</div>
+                    <div>♗</div>
+                    <div>♕</div>
+                    <div>♔</div>
+                    <div>♗</div>
+                    <div>♘</div>
+                    <div>♖</div>
+
+                </div>
+
+
+                <p class="chess-text">
+
+                    Think like a scientist.<br>
+                    Calculate like a chess player.
+
+                </p>
+
+            </div>
+
+
+            <!-- PROJECT CARD -->
+
+            <div class="project-card">
+
+                <div class="project-icon">
+                    🧪
+                </div>
+
+
+                <div class="project-content">
+
+                    <span class="project-label">
+                        PROJECT
+                    </span>
+
+
+                    <strong>
+                        ChemLab 3D
+                    </strong>
+
+
+                    <p>
+                        Virtual Chemistry Laboratory
+                    </p>
+
+
+                    <small>
+                        Created by Mohamed Abraich
+                    </small>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <section class="laboratoire">
+
+            <div class="scene-title">
+
+                <span>
+                    LABORATOIRE 3D
+                </span>
+
+
+                <span id="experimentTime">
+                    0.00 s
+                </span>
+
+            </div>
+
+
+            <div id="scene-container"></div>
+
+
+            <div class="info-panel">
+
+                <div>
+
+                    <span>
+                        Volume
+                    </span>
+
+                    <strong id="infoVolume">
+                        50 mL
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Concentration
+                    </span>
+
+                    <strong id="infoConcentration">
+                        0.50 M
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Température
+                    </span>
+
+                    <strong id="infoTemperature">
+                        25 °C
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        État
+                    </span>
+
+                    <strong id="infoState">
+                        Prêt
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="lab.js"></script>
+
+</body>
+
+</html>
