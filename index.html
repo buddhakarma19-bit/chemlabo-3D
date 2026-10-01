@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +8,15 @@
 
     <link rel="stylesheet" href="design.css">
 
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
 
+    <!-- =========================
+         TOP BAR
+    ========================== -->
     <header class="topbar">
 
         <div>
@@ -24,207 +27,191 @@
             </p>
         </div>
 
-
         <div class="status">
-
             <span class="status-dot"></span>
-
             Simulation active
-
         </div>
 
     </header>
 
 
-    <main>
+    <!-- =========================
+         MAIN
+    ========================== -->
+    <main class="app">
 
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
         <aside class="sidebar">
 
-            <h2>⚗️ Manipulation</h2>
-
+            <h2>⚗️ Expérience</h2>
 
             <label for="experience">
-                Expérience
+                Choisir une expérience
             </label>
-
 
             <select id="experience">
 
-                <option value="">
-                    Choisir...
-                </option>
-
-                <option value="iodure_persulfate">
+                <option value="iodure">
                     I⁻ + S₂O₈²⁻
                 </option>
 
-                <option value="hcl_naoh">
+                <option value="neutralisation">
                     HCl + NaOH
                 </option>
 
-                <option value="hcl_caco3">
+                <option value="carbonate">
                     HCl + CaCO₃
                 </option>
 
-                <option value="hcl_zn">
+                <option value="zinc">
                     HCl + Zn
                 </option>
 
-                <option value="zn_cuso4">
+                <option value="cuivre">
                     Zn + CuSO₄
                 </option>
 
             </select>
 
 
-            <div class="separator"></div>
+            <!-- INVENTORY -->
+            <section class="inventory">
 
+                <h3>🧴 Produits</h3>
 
-            <h3>🧰 Matériel</h3>
-
-
-            <div id="inventory">
-
-                <div class="inventory-item">
-                    🧴 Flacon A
-
-                    <span id="materialA">
-                        —
-                    </span>
+                <div class="material-card">
+                    <span>Produit A</span>
+                    <strong id="materialA">
+                        I⁻
+                    </strong>
                 </div>
 
-
-                <div class="inventory-item">
-                    🧴 Flacon B
-
-                    <span id="materialB">
-                        —
-                    </span>
+                <div class="material-card">
+                    <span>Produit B</span>
+                    <strong id="materialB">
+                        S₂O₈²⁻
+                    </strong>
                 </div>
+
+            </section>
+
+
+            <!-- INSTRUCTIONS -->
+            <section class="instructions">
+
+                <h3>📋 Manipulation</h3>
+
+                <p id="instructions">
+                    Faites glisser les deux flacons vers le bécher.
+                    Versez les solutions puis observez la réaction.
+                </p>
+
+            </section>
+
+
+            <!-- CONTROLS -->
+            <section class="controls">
+
+                <h3>⚙️ Paramètres</h3>
+
+                <label for="volume">
+                    Volume
+                    <span id="volumeValue">50 mL</span>
+                </label>
+
+                <input
+                    id="volume"
+                    type="range"
+                    min="10"
+                    max="100"
+                    value="50"
+                >
+
+
+                <label for="concentration">
+                    Concentration
+                    <span id="concentrationValue">0.10 mol/L</span>
+                </label>
+
+                <input
+                    id="concentration"
+                    type="range"
+                    min="1"
+                    max="20"
+                    value="10"
+                >
+
+
+                <label for="temperature">
+                    Température
+                    <span id="temperatureValue">25 °C</span>
+                </label>
+
+                <input
+                    id="temperature"
+                    type="range"
+                    min="10"
+                    max="60"
+                    value="25"
+                >
+
+            </section>
+
+
+            <!-- BUTTONS -->
+            <div class="buttons">
+
+                <button id="melanger">
+                    🌀 Mélanger
+                </button>
+
+                <button id="resetLab">
+                    🔄 Réinitialiser
+                </button>
 
             </div>
 
 
-            <p class="instruction">
+            <!-- RESULT -->
+            <section class="result-panel">
 
-                ① Prends un flacon avec la souris<br>
-                ② Déplace-le au-dessus du bécher<br>
-                ③ Relâche pour verser<br>
-                ④ Fais pareil avec le deuxième<br>
-                ⑤ Clique sur Mélanger
+                <h3>📊 Résultat</h3>
 
-            </p>
+                <div id="resultat">
+                    En attente de la manipulation...
+                </div>
 
-
-            <button id="melanger">
-                🌀 Mélanger
-            </button>
+            </section>
 
 
-            <button id="resetLab" class="secondary">
-                ↻ Réinitialiser
-            </button>
+            <!-- CHEMBOT -->
+            <section class="chembot">
 
-
-            <div class="separator"></div>
-
-
-            <h3>⚙️ Paramètres</h3>
-
-
-            <label>
-
-                Volume :
-                <span id="volumeValue">
-                    50
-                </span>
-                mL
-
-            </label>
-
-
-            <input id="volume" type="range" min="10" max="100" value="50">
-
-
-            <label>
-
-                Concentration :
-                <span id="concentrationValue">
-                    0.50
-                </span>
-                mol/L
-
-            </label>
-
-
-            <input id="concentration" type="range" min="0.1" max="2" step="0.1" value="0.5">
-
-
-            <label>
-
-                Température :
-                <span id="temperatureValue">
-                    25
-                </span>
-                °C
-
-            </label>
-
-
-            <input id="temperature" type="range" min="10" max="80" value="25">
-
-
-            <div id="resultat">
-
-                <h3>
-                    Résultat
-                </h3>
+                <h3>🤖 ChemBot</h3>
 
                 <p>
-                    Choisis une expérience.
+                    Observez attentivement l'évolution de la réaction.
                 </p>
 
-            </div>
+            </section>
 
 
-            <div class="chem-bot">
+            <!-- CHESS -->
+            <section class="chess-corner">
 
-                <h3>
-                    🤖 ChemBot
-                </h3>
+                <h3>♟️ Chess Corner</h3>
 
-                <p id="botMessage">
-                    Choisis une expérience.
+                <p>
+                    ChemMind Challenge
                 </p>
 
-            </div>
-
-
-            <!-- CHESS CORNER -->
-
-            <div class="chess-corner">
-
-                <div class="chess-header">
-
-                    <span class="chess-icon">
-                        ♟️
-                    </span>
-
-
-                    <div>
-
-                        <h3>
-                            Chess Corner
-                        </h3>
-
-                        <small>
-                            ChemMind Challenge
-                        </small>
-
-                    </div>
-
-                </div>
-
+                <small>
+                    Think like a scientist.<br>
+                    Calculate like a chess player.
+                </small>
 
                 <div class="chess-board">
 
@@ -246,6 +233,23 @@
                     <div>♟</div>
                     <div>♟</div>
 
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
 
                     <div></div>
                     <div></div>
@@ -256,7 +260,6 @@
                     <div></div>
                     <div></div>
 
-
                     <div></div>
                     <div></div>
                     <div></div>
@@ -265,27 +268,6 @@
                     <div></div>
                     <div></div>
                     <div></div>
-
-
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-
-
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-
 
                     <div>♙</div>
                     <div>♙</div>
@@ -295,7 +277,6 @@
                     <div>♙</div>
                     <div>♙</div>
                     <div>♙</div>
-
 
                     <div>♖</div>
                     <div>♘</div>
@@ -308,124 +289,83 @@
 
                 </div>
 
+            </section>
 
-                <p class="chess-text">
 
-                    Think like a scientist.<br>
-                    Calculate like a chess player.
+            <!-- PROJECT -->
+            <section class="project-card">
 
+                <h3>🧪 ChemLab 3D</h3>
+
+                <p>
+                    Virtual Chemistry Laboratory
                 </p>
 
-            </div>
+                <small>
+                    Created by Mohamed Abraich
+                </small>
 
-
-            <!-- PROJECT CARD -->
-
-            <div class="project-card">
-
-                <div class="project-icon">
-                    🧪
-                </div>
-
-
-                <div class="project-content">
-
-                    <span class="project-label">
-                        PROJECT
-                    </span>
-
-
-                    <strong>
-                        ChemLab 3D
-                    </strong>
-
-
-                    <p>
-                        Virtual Chemistry Laboratory
-                    </p>
-
-
-                    <small>
-                        Created by Mohamed Abraich
-                    </small>
-
-                </div>
-
-            </div>
+            </section>
 
         </aside>
 
 
-        <section class="laboratoire">
+        <!-- =========================
+             3D LABORATORY
+        ========================== -->
+        <section class="laboratory">
 
-            <div class="scene-title">
+            <div class="scene-header">
 
-                <span>
-                    LABORATOIRE 3D
-                </span>
+                <div>
+                    <h2>Laboratoire 3D</h2>
 
+                    <p>
+                        Manipulez les produits directement
+                        dans le laboratoire.
+                    </p>
+                </div>
 
-                <span id="experimentTime">
-                    0.00 s
-                </span>
+                <div id="timer">
+                    00:00
+                </div>
 
             </div>
 
 
+            <!-- THREE.JS CONTAINER -->
             <div id="scene-container"></div>
 
 
+            <!-- INFO -->
             <div class="info-panel">
 
                 <div>
-
-                    <span>
-                        Volume
-                    </span>
-
-                    <strong id="infoVolume">
-                        50 mL
+                    <span>⏱️ Temps</span>
+                    <strong id="reactionTime">
+                        0 s
                     </strong>
-
                 </div>
 
-
                 <div>
-
-                    <span>
-                        Concentration
-                    </span>
-
-                    <strong id="infoConcentration">
-                        0.50 M
+                    <span>📈 Avancement</span>
+                    <strong id="progress">
+                        0 %
                     </strong>
-
                 </div>
 
-
                 <div>
-
-                    <span>
-                        Température
-                    </span>
-
-                    <strong id="infoTemperature">
-                        25 °C
+                    <span>⚡ Vitesse</span>
+                    <strong id="reactionSpeed">
+                        —
                     </strong>
-
                 </div>
 
-
                 <div>
-
-                    <span>
-                        État
-                    </span>
-
-                    <strong id="infoState">
-                        Prêt
+                    <span>½ Temps</span>
+                    <strong id="halfLife">
+                        —
                     </strong>
-
                 </div>
 
             </div>
@@ -435,8 +375,10 @@
     </main>
 
 
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
     <script src="lab.js"></script>
 
 </body>
-
 </html>
