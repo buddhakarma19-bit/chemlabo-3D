@@ -1,791 +1,577 @@
+/* =====================================================
+   CHEMLAB 3D — DESIGN V2
+   ===================================================== */
+
 * {
     box-sizing: border-box;
 }
 
+html,
 body {
     margin: 0;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background: #081017;
-
-    color: white;
-
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #071018;
+    color: #f4f7fa;
 }
 
-
-/* ================================
+/* =====================================================
    TOP BAR
-================================ */
+   ===================================================== */
 
 .topbar {
-    height: 74px;
-
+    height: 78px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-
-    padding: 0 24px;
-
-    background:
-        linear-gradient(90deg,
-            #101c25,
-            #12232d);
-
-    border-bottom: 1px solid #263b48;
-
-    box-shadow:
-        0 4px 18px rgba(0, 0, 0, 0.25);
-
-    position: relative;
-    z-index: 20;
+    justify-content: space-between;
+    padding: 0 28px;
+    background: linear-gradient(90deg, #0b1822, #10232e);
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .topbar h1 {
     margin: 0;
-
     font-size: 25px;
-
-    letter-spacing: 0.3px;
+    letter-spacing: .4px;
 }
 
 .topbar p {
-    margin: 4px 0 0;
-
-    color: #8fa6b5;
-
+    margin: 5px 0 0;
+    color: #91a5b3;
     font-size: 13px;
 }
 
 .status {
     display: flex;
-
     align-items: center;
-
-    gap: 8px;
-
-    color: #a9bdc9;
-
+    gap: 9px;
+    padding: 9px 14px;
+    border: 1px solid rgba(70,220,160,.2);
+    border-radius: 20px;
+    background: rgba(40,170,120,.08);
+    color: #9ee8ca;
     font-size: 13px;
 }
 
 .status-dot {
-    width: 9px;
-    height: 9px;
-
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-
-    background: #39d98a;
-
-    box-shadow:
-        0 0 10px #39d98a;
+    background: #42e3a2;
+    box-shadow: 0 0 10px rgba(66,227,162,.8);
 }
 
-
-/* ================================
+/* =====================================================
    MAIN
-================================ */
+   ===================================================== */
 
-main {
+.app {
+    height: calc(100vh - 78px);
     display: flex;
-
-    height: calc(100vh - 74px);
 }
 
-
-/* ================================
+/* =====================================================
    SIDEBAR
-================================ */
+   ===================================================== */
 
 .sidebar {
-    width: 310px;
-
-    flex-shrink: 0;
-
-    padding: 22px;
-
-    background:
-        linear-gradient(180deg,
-            #101d26,
-            #0d1921);
-
-    border-right: 1px solid #263b48;
-
+    width: 315px;
+    min-width: 315px;
+    height: 100%;
     overflow-y: auto;
-
-    scrollbar-width: thin;
+    padding: 20px;
+    background: #0a151e;
+    border-right: 1px solid rgba(255,255,255,.07);
 }
 
 .sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background: #0b151c;
+    width: 5px;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background: #304955;
-
+    background: #263b48;
     border-radius: 10px;
 }
 
 .sidebar h2 {
-    margin-top: 0;
-
-    margin-bottom: 24px;
-
-    font-size: 20px;
+    margin: 0 0 17px;
+    font-size: 18px;
 }
 
 .sidebar h3 {
-    margin-top: 0;
-
-    margin-bottom: 15px;
-
-    font-size: 15px;
-
-    color: #b8cbd5;
+    margin: 0 0 11px;
+    font-size: 14px;
+    color: #dce7ed;
 }
 
 .sidebar label {
     display: block;
-
-    margin-top: 15px;
-
     margin-bottom: 7px;
-
-    color: #aebfca;
-
-    font-size: 13px;
-}
-
-.sidebar select {
-    width: 100%;
-
-    padding: 11px;
-
-    border-radius: 7px;
-
-    border: 1px solid #3a5261;
-
-    background: #1a2b36;
-
-    color: white;
-
-    font-size: 13px;
-
-    outline: none;
-
-    cursor: pointer;
-}
-
-.sidebar select:focus {
-    border-color: #42a5f5;
-
-    box-shadow:
-        0 0 0 2px rgba(66, 165, 245, 0.1);
-}
-
-.sidebar input[type="range"] {
-    width: 100%;
-
-    cursor: pointer;
-
-    accent-color: #42a5f5;
-}
-
-
-/* ================================
-   INVENTORY
-================================ */
-
-#inventory {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-}
-
-.inventory-item {
-    padding: 10px 12px;
-
-    border-radius: 7px;
-
-    background: #142630;
-
-    border: 1px solid #29414e;
-
-    color: #c7d6dd;
-
+    color: #8fa4b2;
     font-size: 12px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
 }
 
-.inventory-item span {
-    color: #ffffff;
+/* =====================================================
+   SELECT
+   ===================================================== */
 
-    font-weight: bold;
-}
-
-
-/* ================================
-   INSTRUCTIONS
-================================ */
-
-.instruction {
-    margin-top: 15px;
-
-    padding: 11px;
-
-    background: #0c171f;
-
-    border-left: 3px solid #42a5f5;
-
-    border-radius: 5px;
-
-    color: #8fa6b5;
-
-    font-size: 11px;
-
-    line-height: 1.7;
-}
-
-
-/* ================================
-   SEPARATOR
-================================ */
-
-.separator {
-    height: 1px;
-
-    background: #293e4b;
-
-    margin: 25px 0;
-}
-
-
-/* ================================
-   BUTTONS
-================================ */
-
-.sidebar button {
+select {
     width: 100%;
-
-    padding: 12px;
-
-    margin-top: 20px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background:
-        linear-gradient(135deg,
-            #1976d2,
-            #1565c0);
-
-    color: white;
-
+    padding: 12px 13px;
+    border: 1px solid #263b48;
+    border-radius: 9px;
+    outline: none;
+    background: #111f29;
+    color: #f2f6f8;
     font-size: 14px;
-
-    font-weight: bold;
-
     cursor: pointer;
-
-    transition:
-        transform 0.2s,
-        background 0.2s,
-        box-shadow 0.2s;
 }
 
-.sidebar button:hover {
-    background:
-        linear-gradient(135deg,
-            #2196f3,
-            #1976d2);
+select:focus {
+    border-color: #4f9fbf;
+}
 
+/* =====================================================
+   INVENTORY
+   ===================================================== */
+
+.inventory {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #0e1d27;
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.material-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    background: #142631;
+    border: 1px solid rgba(255,255,255,.05);
+}
+
+.material-card span {
+    color: #8fa6b5;
+    font-size: 12px;
+}
+
+.material-card strong {
+    color: #d8f5ff;
+    font-size: 15px;
+}
+
+/* =====================================================
+   INSTRUCTIONS
+   ===================================================== */
+
+.instructions {
+    margin-top: 14px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #0e1d27;
+    border-left: 3px solid #4f9fbf;
+}
+
+.instructions p {
+    margin: 0;
+    color: #9db0bb;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   CONTROLS
+   ===================================================== */
+
+.controls {
+    margin-top: 14px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #0e1d27;
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.controls label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 13px;
+    color: #a9bac4;
+}
+
+.controls label span {
+    color: #dff3fa;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin-top: 8px;
+    accent-color: #4f9fbf;
+    cursor: pointer;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+button {
+    flex: 1;
+    min-height: 42px;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #f4fbff;
+    background: #1d5369;
+    transition: .18s ease;
+}
+
+button:hover {
     transform: translateY(-1px);
-
-    box-shadow:
-        0 5px 15px rgba(25, 118, 210, 0.25);
+    background: #286b85;
 }
 
-.sidebar button.secondary {
-    margin-top: 9px;
-
-    background: #263b47;
+#resetLab {
+    background: #172933;
+    border: 1px solid #2b404b;
 }
 
-.sidebar button.secondary:hover {
-    background: #344e5c;
-
-    box-shadow: none;
+#resetLab:hover {
+    background: #223a47;
 }
 
-
-/* ================================
+/* =====================================================
    RESULT
-================================ */
+   ===================================================== */
+
+.result-panel {
+    margin-top: 14px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #0e1d27;
+    border: 1px solid rgba(255,255,255,.06);
+}
 
 #resultat {
-    margin-top: 22px;
-
-    padding: 13px;
-
+    min-height: 42px;
+    padding: 10px;
     border-radius: 8px;
-
-    background:
-        linear-gradient(145deg,
-            #0c171f,
-            #101e27);
-
-    border: 1px solid #263d4a;
-
-    color: #b9cad4;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-#resultat h3 {
-    margin-top: 0;
-
-    color: white;
-}
-
-
-/* ================================
-   CHEM BOT
-================================ */
-
-.chem-bot {
-    margin-top: 15px;
-
-    padding: 13px;
-
-    border-radius: 8px;
-
-    background: #0c171f;
-
-    border: 1px solid #293f4b;
-}
-
-.chem-bot h3 {
-    margin-bottom: 8px;
-}
-
-.chem-bot p {
-    margin: 0;
-
-    color: #91a8b5;
-
+    background: #09151d;
+    color: #a8c0cb;
     font-size: 12px;
-
     line-height: 1.5;
 }
 
+/* =====================================================
+   CHEMBOT
+   ===================================================== */
 
-/* ================================
+.chembot {
+    margin-top: 14px;
+    padding: 15px;
+    border-radius: 12px;
+    background:
+        linear-gradient(135deg, #101f2a, #0c1820);
+    border: 1px solid rgba(75,170,205,.15);
+}
+
+.chembot h3 {
+    color: #aee8ff;
+}
+
+.chembot p {
+    margin: 0;
+    color: #879ca8;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* =====================================================
    CHESS CORNER
-================================ */
+   ===================================================== */
 
 .chess-corner {
-    margin-top: 22px;
-
-    padding: 14px;
-
-    border-radius: 10px;
-
+    position: relative;
+    margin-top: 14px;
+    padding: 15px;
+    min-height: 115px;
+    overflow: hidden;
+    border-radius: 12px;
     background:
-        linear-gradient(145deg,
-            #0c171f,
-            #111f28);
-
-    border: 1px solid #29424f;
-
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.18);
+        linear-gradient(135deg, #111b23, #0c151c);
+    border: 1px solid rgba(255,255,255,.07);
 }
 
-.chess-header {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-bottom: 12px;
+.chess-corner::after {
+    content: "♞";
+    position: absolute;
+    right: 15px;
+    bottom: -14px;
+    font-size: 72px;
+    line-height: 1;
+    color: rgba(255,255,255,.055);
 }
 
-.chess-icon {
-    font-size: 24px;
+.chess-corner h3 {
+    margin-bottom: 5px;
+    color: #dce7ed;
 }
 
-.chess-header h3 {
-    margin: 0;
-
-    color: white;
-
-    font-size: 14px;
+.chess-corner p {
+    margin: 0 0 6px;
+    color: #9bb0bc;
+    font-size: 12px;
 }
 
-.chess-header small {
-    color: #78909c;
-
+.chess-corner small {
+    color: #718793;
     font-size: 10px;
+    line-height: 1.5;
 }
+
+/* Hide the old board itself.
+   Chess remains as elegant decoration. */
 
 .chess-board {
-    width: 100%;
-
-    aspect-ratio: 1;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(8, 1fr);
-
-    border: 2px solid #536773;
-
-    overflow: hidden;
-
-    border-radius: 4px;
-
-    box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.3);
+    display: none;
 }
 
-.chess-board div {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 19px;
-
-    line-height: 1;
-
-    user-select: none;
-}
-
-.chess-board div:nth-child(16n + 1),
-.chess-board div:nth-child(16n + 3),
-.chess-board div:nth-child(16n + 5),
-.chess-board div:nth-child(16n + 7),
-.chess-board div:nth-child(16n + 10),
-.chess-board div:nth-child(16n + 12),
-.chess-board div:nth-child(16n + 14),
-.chess-board div:nth-child(16n + 16) {
-    background: #607d8b;
-}
-
-.chess-board div:nth-child(16n + 2),
-.chess-board div:nth-child(16n + 4),
-.chess-board div:nth-child(16n + 6),
-.chess-board div:nth-child(16n + 8),
-.chess-board div:nth-child(16n + 9),
-.chess-board div:nth-child(16n + 11),
-.chess-board div:nth-child(16n + 13),
-.chess-board div:nth-child(16n + 15) {
-    background: #263b47;
-}
-
-.chess-text {
-    margin: 12px 0 0;
-
-    color: #8fa6b5;
-
-    font-size: 10px;
-
-    line-height: 1.5;
-
-    text-align: center;
-}
-
-
-/* ================================
+/* =====================================================
    PROJECT CARD
-================================ */
+   ===================================================== */
 
 .project-card {
-    margin-top: 18px;
-
-    padding: 13px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-
-    border-radius: 9px;
-
-    background:
-        linear-gradient(135deg,
-            #142630,
-            #0c171f);
-
-    border: 1px solid #2b4552;
-
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.15);
+    margin-top: 14px;
+    padding: 14px 15px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #102530, #0d1b23);
+    border: 1px solid rgba(86,173,205,.18);
 }
 
-.project-icon {
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 8px;
-
-    background: #172f3b;
-
-    border: 1px solid #355362;
-
-    font-size: 20px;
+.project-card h3 {
+    margin-bottom: 5px;
+    color: #c9f1ff;
 }
 
-.project-content {
+.project-card p {
+    margin: 0 0 6px;
+    color: #8da5b1;
+    font-size: 11px;
+}
+
+.project-card small {
+    color: #68aeca;
+    font-size: 11px;
+}
+
+/* =====================================================
+   LABORATORY
+   ===================================================== */
+
+.laboratory {
+    position: relative;
+    flex: 1;
     min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 45%, #142934 0%, #09151d 48%, #061017 100%);
 }
 
-.project-label {
-    display: block;
+/* subtle laboratory grid */
 
-    color: #5f8291;
-
-    font-size: 8px;
-
-    letter-spacing: 1.5px;
-
-    margin-bottom: 2px;
+.laboratory::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .12;
+    background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 45px 45px;
 }
 
-.project-content strong {
-    display: block;
+/* =====================================================
+   SCENE HEADER
+   ===================================================== */
 
-    color: white;
+.scene-header {
+    position: absolute;
+    z-index: 10;
+    top: 18px;
+    left: 22px;
+    right: 22px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    pointer-events: none;
+}
 
+.scene-header h2 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.scene-header p {
+    margin: 5px 0 0;
+    color: #8196a2;
+    font-size: 11px;
+}
+
+#timer {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: rgba(7,16,24,.78);
+    border: 1px solid rgba(255,255,255,.08);
+    color: #bfe7f5;
+    font-family: monospace;
     font-size: 13px;
 }
 
-.project-content p {
-    margin: 3px 0;
-
-    color: #8fa6b5;
-
-    font-size: 10px;
-}
-
-.project-content small {
-    color: #607d8b;
-
-    font-size: 9px;
-}
-
-
-/* ================================
-   LABORATORY
-================================ */
-
-.laboratoire {
-    position: relative;
-
-    flex: 1;
-
-    min-width: 0;
-
-    overflow: hidden;
-
-    background:
-        radial-gradient(circle at center,
-            #1a303c 0%,
-            #0c171e 45%,
-            #070f14 100%);
-}
-
-
-/* subtle lab grid */
-
-.laboratoire::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    opacity: 0.08;
-
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.2) 1px,
-            transparent 1px),
-        linear-gradient(90deg,
-            rgba(255, 255, 255, 0.2) 1px,
-            transparent 1px);
-
-    background-size: 50px 50px;
-}
-
-
-/* ================================
-   3D CONTAINER
-================================ */
+/* =====================================================
+   THREE.JS
+   ===================================================== */
 
 #scene-container {
+    position: absolute;
+    inset: 0;
     width: 100%;
-
     height: 100%;
-
-    position: relative;
-
-    z-index: 1;
 }
 
 #scene-container canvas {
     display: block;
+    width: 100% !important;
+    height: 100% !important;
 }
 
-
-/* ================================
-   SCENE TITLE
-================================ */
-
-.scene-title {
-    position: absolute;
-
-    top: 18px;
-
-    left: 20px;
-
-    right: 20px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    z-index: 10;
-
-    pointer-events: none;
-
-    color: #9eb3bf;
-
-    font-size: 11px;
-
-    letter-spacing: 1.5px;
-}
-
-.scene-title span:last-child {
-    color: #ffffff;
-
-    font-size: 13px;
-
-    letter-spacing: 0;
-
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* ================================
+/* =====================================================
    INFO PANEL
-================================ */
+   ===================================================== */
 
 .info-panel {
     position: absolute;
-
-    left: 20px;
-
+    z-index: 20;
+    left: 50%;
     bottom: 20px;
+    transform: translateX(-50%);
 
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(115px, 1fr));
+    gap: 8px;
 
-    gap: 10px;
+    width: min(650px, calc(100% - 40px));
 
-    z-index: 10;
+    padding: 9px;
 
-    pointer-events: none;
+    border-radius: 13px;
+    background: rgba(8,18,25,.88);
+    border: 1px solid rgba(255,255,255,.09);
+    backdrop-filter: blur(10px);
 }
 
-.info-panel div {
-    min-width: 105px;
-
-    padding: 9px 12px;
-
-    border-radius: 7px;
-
-    background:
-        rgba(10, 22, 30, 0.88);
-
-    border: 1px solid #29424f;
-
-    backdrop-filter: blur(6px);
-
-    box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.18);
+.info-panel > div {
+    padding: 9px 11px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.035);
+    text-align: center;
 }
 
 .info-panel span {
     display: block;
-
-    color: #78909c;
-
-    font-size: 10px;
-
     margin-bottom: 4px;
+    color: #718793;
+    font-size: 10px;
 }
 
 .info-panel strong {
+    display: block;
+    color: #d9f4ff;
     font-size: 13px;
-
-    color: white;
 }
 
-
-/* ================================
+/* =====================================================
    MOBILE
-================================ */
+   ===================================================== */
 
-@media (max-width: 800px) {
+@media (max-width: 850px) {
 
-    .sidebar {
-        width: 250px;
-    }
-
-    .info-panel {
-        display: none;
+    body {
+        overflow: auto;
     }
 
     .topbar {
-        padding: 0 14px;
+        height: auto;
+        min-height: 70px;
+        padding: 14px 16px;
     }
 
     .topbar h1 {
         font-size: 20px;
     }
 
-    .topbar p {
-        font-size: 10px;
+    .status {
+        display: none;
     }
 
-    .status {
-        font-size: 10px;
+    .app {
+        height: auto;
+        min-height: calc(100vh - 70px);
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        max-height: none;
+    }
+
+    .laboratory {
+        height: 650px;
+        min-height: 650px;
+    }
+
+    .info-panel {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 12px;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .sidebar {
+        padding: 15px;
+    }
+
+    .laboratory {
+        height: 560px;
+        min-height: 560px;
+    }
+
+    .scene-header {
+        left: 14px;
+        right: 14px;
+    }
+
+    .scene-header h2 {
+        font-size: 16px;
+    }
+
+    .info-panel {
+        width: calc(100% - 24px);
     }
 }
