@@ -5,6 +5,14 @@
 
 const container = document.getElementById("scene-container");
 
+function getOptionalElement(id) {
+    return document.getElementById(id);
+}
+
+function setText(el, value) {
+    if (el) el.textContent = value;
+}
+
 const experienceSelect = document.getElementById("experience");
 const melangerButton = document.getElementById("melanger");
 const resetButton = document.getElementById("resetLab");
@@ -49,7 +57,6 @@ let bottleA;
 let bottleB;
 
 let selectedObject = null;
-
 let dragging = false;
 
 let pouredA = false;
@@ -96,7 +103,6 @@ const materialColors = {
     Zn: 0x9da7ad,
 
     CuSO4: 0x276bd1
-
 };
 
 
@@ -219,7 +225,6 @@ const experiences = {
         explanation:
             "Le zinc réagit avec les ions cuivre(II)."
     }
-
 };
 
 
@@ -229,8 +234,14 @@ const experiences = {
 
 function init() {
 
-    scene =
-        new THREE.Scene();
+    if (!container || typeof THREE === "undefined") {
+        console.error(
+            "ChemLab 3D: scene-container or Three.js is missing."
+        );
+        return;
+    }
+
+    scene = new THREE.Scene();
 
     scene.background =
         new THREE.Color(0x0b151d);
@@ -248,15 +259,21 @@ function init() {
 
     camera.position.set(
         0,
-        2.5,
-        8
+        1.8,
+        9.6
     );
 
 
     renderer =
         new THREE.WebGLRenderer({
-            antialias: true
+            antialias: true,
+            alpha: true
         });
+
+    renderer.shadowMap.enabled = true;
+
+    renderer.shadowMap.type =
+        THREE.PCFSoftShadowMap;
 
 
     renderer.setPixelRatio(
@@ -296,9 +313,7 @@ function init() {
             1.2
         );
 
-    scene.add(
-        ambient
-    );
+    scene.add(ambient);
 
 
     const mainLight =
@@ -313,9 +328,7 @@ function init() {
         5
     );
 
-    scene.add(
-        mainLight
-    );
+    scene.add(mainLight);
 
 
     const blueLight =
@@ -331,9 +344,7 @@ function init() {
         4
     );
 
-    scene.add(
-        blueLight
-    );
+    scene.add(blueLight);
 
 
     createTable();
@@ -343,6 +354,8 @@ function init() {
     createBottleA();
 
     createBottleB();
+
+    createLabLabels();
 
 
     // =================================================
@@ -354,18 +367,15 @@ function init() {
         mouseDown
     );
 
-
     renderer.domElement.addEventListener(
         "mousemove",
         mouseMove
     );
 
-
     renderer.domElement.addEventListener(
         "mouseup",
         mouseUp
     );
-
 
     renderer.domElement.addEventListener(
         "mouseleave",
@@ -385,9 +395,9 @@ function createTable() {
 
     const geometry =
         new THREE.BoxGeometry(
-            11,
-            0.5,
-            6
+            12,
+            0.42,
+            6.4
         );
 
 
@@ -406,12 +416,161 @@ function createTable() {
 
 
     table.position.y =
-        -1.7;
+        -1.72;
+
+    table.receiveShadow = true;
+
+    scene.add(table);
 
 
-    scene.add(
-        table
+    // Rear laboratory wall
+
+    const back =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                12,
+                3.2,
+                0.18
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x13232d,
+                roughness: 0.9
+            })
+        );
+
+
+    back.position.set(
+        0,
+        0,
+        -2.7
     );
+
+    scene.add(back);
+
+
+    // Shelf
+
+    const shelf =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                8.8,
+                0.16,
+                1.1
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x263943,
+                roughness: 0.65
+            })
+        );
+
+
+    shelf.position.set(
+        0,
+        1.35,
+        -2.05
+    );
+
+    scene.add(shelf);
+
+
+    const shelfEdge =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                8.9,
+                0.08,
+                0.08
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x72b7ff,
+                emissive: 0x143c5a
+            })
+        );
+
+
+    shelfEdge.position.set(
+        0,
+        1.43,
+        -1.5
+    );
+
+    scene.add(shelfEdge);
+
+
+    // =================================================
+    // SMALL CHESS DECORATION
+    // =================================================
+
+    const chessMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xd6dde2,
+            metalness: 0.15,
+            roughness: 0.4
+        });
+
+
+    const chessBase =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.22,
+                0.28,
+                0.12,
+                24
+            ),
+            chessMaterial
+        );
+
+
+    chessBase.position.set(
+        4.35,
+        -1.48,
+        -1.65
+    );
+
+    scene.add(chessBase);
+
+
+    const chessBody =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.11,
+                0.17,
+                0.42,
+                18
+            ),
+            chessMaterial
+        );
+
+
+    chessBody.position.set(
+        4.35,
+        -1.20,
+        -1.65
+    );
+
+    scene.add(chessBody);
+
+
+    const chessHead =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.15,
+                18,
+                14
+            ),
+            chessMaterial
+        );
+
+
+    chessHead.position.set(
+        4.35,
+        -0.86,
+        -1.65
+    );
+
+    scene.add(chessHead);
 }
 
 
@@ -433,15 +592,14 @@ function createBeaker() {
             roughness: 0.04,
 
             side: THREE.DoubleSide
-
         });
 
 
     const geometry =
         new THREE.CylinderGeometry(
-            1.55,
-            1.25,
-            2.8,
+            1.38,
+            1.16,
+            2.55,
             64,
             1,
             true
@@ -457,20 +615,73 @@ function createBeaker() {
 
     beaker.position.set(
         0,
-        -0.1,
+        0.05,
         0
     );
 
 
-    scene.add(
-        beaker
-    );
+    scene.add(beaker);
 
+
+    // Beaker rim
+
+    const rim =
+        new THREE.Mesh(
+            new THREE.TorusGeometry(
+                1.39,
+                0.035,
+                10,
+                64
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0xbfe9ff,
+                transparent: true,
+                opacity: 0.8
+            })
+        );
+
+
+    rim.rotation.x =
+        Math.PI / 2;
+
+    rim.position.y =
+        1.325;
+
+    scene.add(rim);
+
+
+    // Beaker base
+
+    const base =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                1.18,
+                1.18,
+                0.08,
+                48
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x9cc9dc,
+                transparent: true,
+                opacity: 0.45
+            })
+        );
+
+
+    base.position.y =
+        -1.225;
+
+    scene.add(base);
+
+
+    // Liquid
 
     const liquidGeometry =
         new THREE.CylinderGeometry(
-            1.25,
-            1.1,
+            1.12,
+            1.00,
             0.1,
             64
         );
@@ -500,9 +711,7 @@ function createBeaker() {
         -1.15;
 
 
-    scene.add(
-        beakerLiquid
-    );
+    scene.add(beakerLiquid);
 }
 
 
@@ -524,9 +733,9 @@ function createBottle(
 
     const bodyGeometry =
         new THREE.CylinderGeometry(
+            0.48,
             0.55,
-            0.62,
-            1.45,
+            1.30,
             32
         );
 
@@ -551,18 +760,18 @@ function createBottle(
         );
 
 
-    group.add(
-        body
-    );
+    body.castShadow = true;
+
+    group.add(body);
 
 
     // LIQUID
 
     const liquidGeometry =
         new THREE.CylinderGeometry(
-            0.46,
-            0.50,
-            0.78,
+            0.40,
+            0.44,
+            0.70,
             32
         );
 
@@ -586,25 +795,23 @@ function createBottle(
 
 
     liquid.position.y =
-        -0.20;
-
+        -0.18;
 
     liquid.name =
         "liquid";
 
+    liquid.castShadow = true;
 
-    group.add(
-        liquid
-    );
+    group.add(liquid);
 
 
     // NECK
 
     const neckGeometry =
         new THREE.CylinderGeometry(
+            0.26,
             0.30,
-            0.34,
-            0.30,
+            0.28,
             24
         );
 
@@ -628,21 +835,18 @@ function createBottle(
 
 
     neck.position.y =
-        0.72;
+        0.65;
 
-
-    group.add(
-        neck
-    );
+    group.add(neck);
 
 
     // CAP
 
     const capGeometry =
         new THREE.CylinderGeometry(
+            0.24,
+            0.24,
             0.28,
-            0.28,
-            0.32,
             24
         );
 
@@ -661,12 +865,9 @@ function createBottle(
 
 
     cap.position.y =
-        0.99;
+        0.91;
 
-
-    group.add(
-        cap
-    );
+    group.add(cap);
 
 
     // POSITION
@@ -674,7 +875,7 @@ function createBottle(
     group.position.set(
         x,
         -0.25,
-        0
+        0.15
     );
 
 
@@ -686,12 +887,117 @@ function createBottle(
         group.position.clone();
 
 
-    scene.add(
-        group
-    );
+    scene.add(group);
 
 
     return group;
+}
+
+
+// =====================================================
+// LABELS
+// =====================================================
+
+function createLabLabels() {
+
+    const makeLabel =
+        (text, x) => {
+
+            const canvas =
+                document.createElement("canvas");
+
+            canvas.width = 512;
+            canvas.height = 128;
+
+
+            const ctx =
+                canvas.getContext("2d");
+
+
+            ctx.fillStyle =
+                "rgba(10,20,28,0.88)";
+
+            ctx.fillRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            ctx.strokeStyle =
+                "rgba(114,183,255,0.75)";
+
+            ctx.lineWidth = 5;
+
+            ctx.strokeRect(
+                3,
+                3,
+                canvas.width - 6,
+                canvas.height - 6
+            );
+
+
+            ctx.fillStyle =
+                "#eef7ff";
+
+            ctx.font =
+                "bold 42px Arial";
+
+            ctx.textAlign =
+                "center";
+
+            ctx.textBaseline =
+                "middle";
+
+
+            ctx.fillText(
+                text,
+                canvas.width / 2,
+                canvas.height / 2
+            );
+
+
+            const texture =
+                new THREE.CanvasTexture(canvas);
+
+
+            const sprite =
+                new THREE.Sprite(
+                    new THREE.SpriteMaterial({
+                        map: texture,
+                        transparent: true
+                    })
+                );
+
+
+            sprite.scale.set(
+                1.55,
+                0.39,
+                1
+            );
+
+
+            sprite.position.set(
+                x,
+                0.55,
+                -0.65
+            );
+
+
+            scene.add(sprite);
+        };
+
+
+    makeLabel(
+        "RÉACTIF A",
+        -3.15
+    );
+
+    makeLabel(
+        "RÉACTIF B",
+        3.15
+    );
 }
 
 
@@ -703,7 +1009,7 @@ function createBottleA() {
 
     bottleA =
         createBottle(
-            -3,
+            -3.15,
             materialColors.I,
             "I⁻"
         );
@@ -714,7 +1020,7 @@ function createBottleB() {
 
     bottleB =
         createBottle(
-            3,
+            3.15,
             materialColors.S2O8,
             "S₂O₈²⁻"
         );
@@ -725,9 +1031,7 @@ function createBottleB() {
 // MATERIAL COLOR
 // =====================================================
 
-function getMaterialColor(
-    name
-) {
+function getMaterialColor(name) {
 
     if (name === "I⁻")
         return materialColors.I;
@@ -750,39 +1054,33 @@ function getMaterialColor(
     if (name === "CuSO₄")
         return materialColors.CuSO4;
 
-    return 0xffffff;
+    return 0xddeeff;
 }
-
-
 // =====================================================
 // UPDATE BOTTLES
 // =====================================================
 
 function updateBottleAppearance() {
 
-    const key =
-        experienceSelect.value;
+    const key = experienceSelect.value;
+    const exp = experiences[key];
 
-    const exp =
-        experiences[key];
+    if (!exp || !bottleA || !bottleB) return;
 
+    const liquidA = bottleA.getObjectByName("liquid");
+    const liquidB = bottleB.getObjectByName("liquid");
 
-    if (!exp)
-        return;
-
-
-    bottleA
-        .getObjectByName("liquid")
-        .material.color.set(
+    if (liquidA) {
+        liquidA.material.color.set(
             getMaterialColor(exp.A)
         );
+    }
 
-
-    bottleB
-        .getObjectByName("liquid")
-        .material.color.set(
+    if (liquidB) {
+        liquidB.material.color.set(
             getMaterialColor(exp.B)
         );
+    }
 }
 
 
@@ -790,99 +1088,61 @@ function updateBottleAppearance() {
 // EXPERIENCE SELECT
 // =====================================================
 
-experienceSelect.addEventListener(
-    "change",
-    function () {
+experienceSelect.addEventListener("change", function () {
 
-        clearTimeout(
-            autoReactionTimer
-        );
+    clearTimeout(autoReactionTimer);
 
+    resetLab();
 
-        resetLab();
+    const key = experienceSelect.value;
+    const exp = experiences[key];
 
+    if (!exp) return;
 
-        const key =
-            experienceSelect.value;
+    if (materialA) materialA.textContent = exp.A;
+    if (materialB) materialB.textContent = exp.B;
 
+    updateBottleAppearance();
 
-        const exp =
-            experiences[key];
+    setText(botMessage, exp.explanation);
 
-
-        if (!exp)
-            return;
-
-
-        materialA.textContent =
-            exp.A;
-
-
-        materialB.textContent =
-            exp.B;
-
-
-        updateBottleAppearance();
-
-
-        botMessage.textContent =
-            exp.explanation;
-
-
+    if (resultat) {
         resultat.innerHTML = `
-
             <h3>🧪 ${exp.name}</h3>
 
             <p>
                 <strong>Équation :</strong>
             </p>
 
-            <p>
-                ${exp.equation}
-            </p>
+            <p>${exp.equation}</p>
 
             <p>
                 Prends les deux flacons,
                 puis verse-les dans le bécher.
             </p>
-
         `;
     }
-);
+});
 
 
 // =====================================================
 // MOUSE DOWN
 // =====================================================
 
-function mouseDown(
-    event
-) {
+function mouseDown(event) {
 
-    if (mixing)
-        return;
-
+    if (mixing) return;
 
     const rect =
-        renderer.domElement
-            .getBoundingClientRect();
-
+        renderer.domElement.getBoundingClientRect();
 
     mouse.x =
-        ((event.clientX - rect.left) /
-            rect.width) * 2 - 1;
-
+        ((event.clientX - rect.left) / rect.width) * 2 - 1;
 
     mouse.y =
-        -((event.clientY - rect.top) /
-            rect.height) * 2 + 1;
+        -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-
-    raycaster.setFromCamera(
-        mouse,
-        camera
-    );
-
+    raycaster.setFromCamera(mouse, camera);
 
     const intersections =
         raycaster.intersectObjects(
@@ -890,38 +1150,23 @@ function mouseDown(
             true
         );
 
+    if (intersections.length === 0) return;
 
-    if (
-        intersections.length === 0
-    )
-        return;
-
-
-    selectedObject =
-        intersections[0].object;
-
+    selectedObject = intersections[0].object;
 
     while (
         selectedObject.parent &&
         selectedObject !== bottleA &&
         selectedObject !== bottleB
     ) {
-
-        selectedObject =
-            selectedObject.parent;
+        selectedObject = selectedObject.parent;
     }
 
+    dragging = true;
 
-    dragging =
-        true;
+    setText(infoState, "Manipulation");
 
-
-    infoState.textContent =
-        "Manipulation";
-
-
-    renderer.domElement.style.cursor =
-        "grabbing";
+    renderer.domElement.style.cursor = "grabbing";
 }
 
 
@@ -929,31 +1174,18 @@ function mouseDown(
 // MOUSE MOVE
 // =====================================================
 
-function mouseMove(
-    event
-) {
+function mouseMove(event) {
 
-    if (
-        !dragging ||
-        !selectedObject
-    )
-        return;
-
+    if (!dragging || !selectedObject) return;
 
     const rect =
-        renderer.domElement
-            .getBoundingClientRect();
-
+        renderer.domElement.getBoundingClientRect();
 
     mouse.x =
-        ((event.clientX - rect.left) /
-            rect.width) * 2 - 1;
-
+        ((event.clientX - rect.left) / rect.width) * 2 - 1;
 
     mouse.y =
-        -((event.clientY - rect.top) /
-            rect.height) * 2 + 1;
-
+        -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
     const vector =
         new THREE.Vector3(
@@ -962,32 +1194,22 @@ function mouseMove(
             0.5
         );
 
-
-    vector.unproject(
-        camera
-    );
-
+    vector.unproject(camera);
 
     const direction =
         vector
             .sub(camera.position)
             .normalize();
 
-
     const distance =
-        -camera.position.z /
-        direction.z;
-
+        -camera.position.z / direction.z;
 
     const position =
         camera.position
             .clone()
             .add(
-                direction.multiplyScalar(
-                    distance
-                )
+                direction.multiplyScalar(distance)
             );
-
 
     selectedObject.position.x =
         THREE.MathUtils.clamp(
@@ -996,7 +1218,6 @@ function mouseMove(
             4.5
         );
 
-
     selectedObject.position.y =
         THREE.MathUtils.clamp(
             position.y,
@@ -1004,12 +1225,9 @@ function mouseMove(
             3
         );
 
+    // Inclinaison du flacon
 
-    // Rotation
-
-    if (
-        selectedObject.position.x < -0.8
-    ) {
+    if (selectedObject.position.x < -0.8) {
 
         selectedObject.rotation.z =
             THREE.MathUtils.lerp(
@@ -1023,9 +1241,7 @@ function mouseMove(
                 )
             );
 
-    } else if (
-        selectedObject.position.x > 0.8
-    ) {
+    } else if (selectedObject.position.x > 0.8) {
 
         selectedObject.rotation.z =
             THREE.MathUtils.lerp(
@@ -1038,12 +1254,13 @@ function mouseMove(
                     ) / 2
                 )
             );
+
+    } else {
+
+        selectedObject.rotation.z = 0;
     }
 
-
-    checkPour(
-        selectedObject
-    );
+    checkPour(selectedObject);
 }
 
 
@@ -1054,53 +1271,32 @@ function mouseMove(
 function mouseUp() {
 
     if (!selectedObject) {
-
-        dragging =
-            false;
-
+        dragging = false;
         return;
     }
 
-
-    checkPour(
-        selectedObject
-    );
-
+    checkPour(selectedObject);
 
     if (
         selectedObject === bottleA &&
         !pouredA &&
         !pouringA
     ) {
-
-        returnBottle(
-            bottleA
-        );
+        returnBottle(bottleA);
     }
-
 
     if (
         selectedObject === bottleB &&
         !pouredB &&
         !pouringB
     ) {
-
-        returnBottle(
-            bottleB
-        );
+        returnBottle(bottleB);
     }
 
+    selectedObject = null;
+    dragging = false;
 
-    selectedObject =
-        null;
-
-
-    dragging =
-        false;
-
-
-    renderer.domElement.style.cursor =
-        "default";
+    renderer.domElement.style.cursor = "default";
 }
 
 
@@ -1108,17 +1304,13 @@ function mouseUp() {
 // RETURN BOTTLE
 // =====================================================
 
-function returnBottle(
-    bottle
-) {
+function returnBottle(bottle) {
 
     bottle.position.copy(
         bottle.userData.originalPosition
     );
 
-
-    bottle.rotation.z =
-        0;
+    bottle.rotation.z = 0;
 }
 
 
@@ -1126,23 +1318,18 @@ function returnBottle(
 // CHECK POUR
 // =====================================================
 
-function checkPour(
-    bottle
-) {
+function checkPour(bottle) {
 
     if (
         !bottle ||
         !experienceSelect.value
-    )
-        return;
-
+    ) return;
 
     const distance =
         Math.sqrt(
             bottle.position.x ** 2 +
             (bottle.position.y + 0.1) ** 2
         );
-
 
     if (
         distance < 1.9 &&
@@ -1154,20 +1341,17 @@ function checkPour(
             !pouredA &&
             !pouringA
         ) {
-
             pourBottle(
                 bottleA,
                 "A"
             );
         }
 
-
         if (
             bottle === bottleB &&
             !pouredB &&
             !pouringB
         ) {
-
             pourBottle(
                 bottleB,
                 "B"
@@ -1181,24 +1365,13 @@ function checkPour(
 // POUR BOTTLE
 // =====================================================
 
-function pourBottle(
-    bottle,
-    side
-) {
+function pourBottle(bottle, side) {
 
-    if (
-        side === "A"
-    ) {
-
-        pouringA =
-            true;
-
+    if (side === "A") {
+        pouringA = true;
     } else {
-
-        pouringB =
-            true;
+        pouringB = true;
     }
-
 
     // Position au-dessus du bécher
 
@@ -1207,16 +1380,12 @@ function pourBottle(
             ? -1.35
             : 1.35;
 
-
-    bottle.position.y =
-        1.8;
-
+    bottle.position.y = 1.72;
 
     bottle.rotation.z =
         side === "A"
             ? -0.95
             : 0.95;
-
 
     const stream =
         createPourStream(
@@ -1224,27 +1393,21 @@ function pourBottle(
             side
         );
 
-
     const liquid =
-        bottle.getObjectByName(
-            "liquid"
-        );
-
+        bottle.getObjectByName("liquid");
 
     const start =
         performance.now();
 
+    const startBeakerVolume =
+        beakerVolume;
 
-    const duration =
-        1000;
-
+    const duration = 1000;
 
     function transfer() {
 
         const elapsed =
-            performance.now() -
-            start;
-
+            performance.now() - start;
 
         const progress =
             Math.min(
@@ -1252,41 +1415,33 @@ function pourBottle(
                 1
             );
 
-
-        // liquide bouteille
+        // Liquide du flacon
 
         if (liquid) {
 
             liquid.scale.y =
-                1 -
-                progress * 0.88;
+                1 - progress * 0.88;
 
             liquid.position.y =
-                -0.2 -
-                progress * 0.18;
+                -0.2 - progress * 0.18;
         }
 
-
-        // liquide bécher
+        // Liquide du bécher
 
         updateBeakerVolume(
+            startBeakerVolume,
             progress
         );
 
-
-        // stream
+        // Jet
 
         if (stream) {
 
             stream.scale.y =
-                0.5 +
-                progress * 0.5;
+                0.5 + progress * 0.5;
         }
 
-
-        if (
-            progress < 1
-        ) {
+        if (progress < 1) {
 
             requestAnimationFrame(
                 transfer
@@ -1301,7 +1456,6 @@ function pourBottle(
             );
         }
     }
-
 
     transfer();
 }
@@ -1319,79 +1473,47 @@ function finishPour(
 
     if (stream) {
 
-        scene.remove(
-            stream
-        );
-
+        scene.remove(stream);
 
         const index =
-            pourStreams.indexOf(
-                stream
-            );
-
+            pourStreams.indexOf(stream);
 
         if (index !== -1) {
-
-            pourStreams.splice(
-                index,
-                1
-            );
+            pourStreams.splice(index, 1);
         }
     }
 
+    if (side === "A") {
 
-    if (
-        side === "A"
-    ) {
-
-        pouringA =
-            false;
-
-        pouredA =
-            true;
+        pouringA = false;
+        pouredA = true;
 
     } else {
 
-        pouringB =
-            false;
-
-        pouredB =
-            true;
+        pouringB = false;
+        pouredB = true;
     }
 
-
-    bottle.rotation.z =
-        0;
-
+    bottle.rotation.z = 0;
 
     bottle.position.copy(
         bottle.userData.originalPosition
     );
 
-
-    infoState.textContent =
+    setText(
+        infoState,
         side === "A"
             ? "Réactif A ajouté"
-            : "Réactif B ajouté";
-
+            : "Réactif B ajouté"
+    );
 
     updateResult();
 
-
-    // Auto reaction
-
-    if (
-        pouredA &&
-        pouredB
-    ) {
+    if (pouredA && pouredB) {
 
         autoReactionTimer =
             setTimeout(
-                function () {
-
-                    startReaction();
-
-                },
+                startReaction,
                 600
             );
     }
@@ -1407,30 +1529,37 @@ function createPourStream(
     side
 ) {
 
+    const key =
+        experienceSelect.value;
+
+    const exp =
+        experiences[key];
+
+    const materialName =
+        side === "A"
+            ? exp.A
+            : exp.B;
+
     const geometry =
         new THREE.CylinderGeometry(
-            0.055,
-            0.035,
-            1.5,
+            0.045,
+            0.028,
+            1.35,
             12
         );
-
 
     const material =
         new THREE.MeshStandardMaterial({
 
             color:
-                side === "A"
-                    ? materialColors.I
-                    : materialColors.S2O8,
+                getMaterialColor(
+                    materialName
+                ),
 
-            transparent:
-                true,
+            transparent: true,
 
-            opacity:
-                0.75
+            opacity: 0.75
         });
-
 
     const stream =
         new THREE.Mesh(
@@ -1438,27 +1567,18 @@ function createPourStream(
             material
         );
 
-
     stream.userData.bottle =
         bottle;
 
-
     stream.position.set(
         bottle.position.x,
-        bottle.position.y - 0.9,
+        bottle.position.y - 0.68,
         0
     );
 
+    scene.add(stream);
 
-    scene.add(
-        stream
-    );
-
-
-    pourStreams.push(
-        stream
-    );
-
+    pourStreams.push(stream);
 
     return stream;
 }
@@ -1470,30 +1590,22 @@ function createPourStream(
 
 function updatePourStreams() {
 
-    pourStreams.forEach(
-        stream => {
+    pourStreams.forEach(stream => {
 
-            const bottle =
-                stream.userData.bottle;
+        const bottle =
+            stream.userData.bottle;
 
+        if (!bottle) return;
 
-            if (!bottle)
-                return;
+        stream.position.x =
+            bottle.position.x;
 
+        stream.position.y =
+            bottle.position.y - 0.68;
 
-            stream.position.x =
-                bottle.position.x;
-
-
-            stream.position.y =
-                bottle.position.y -
-                0.8;
-
-
-            stream.rotation.z =
-                bottle.rotation.z;
-        }
-    );
+        stream.rotation.z =
+            bottle.rotation.z;
+    });
 }
 
 
@@ -1502,31 +1614,29 @@ function updatePourStreams() {
 // =====================================================
 
 function updateBeakerVolume(
+    startVolume,
     progress
 ) {
 
-    const target =
-        0.48;
-
+    const addedVolume = 0.38;
 
     beakerVolume =
-        Math.max(
-            beakerVolume,
-            target * progress
+        THREE.MathUtils.clamp(
+            startVolume +
+            addedVolume * progress,
+            0,
+            0.86
         );
 
-
     const height =
-        0.1 +
-        beakerVolume * 1.1;
-
+        0.10 +
+        beakerVolume * 2.05;
 
     beakerLiquid.scale.y =
-        height / 0.1;
-
+        height / 0.10;
 
     beakerLiquid.position.y =
-        -1.25 +
+        -1.18 +
         height / 2;
 }
 
@@ -1540,19 +1650,12 @@ function updateResult() {
     const key =
         experienceSelect.value;
 
-
     const exp =
         experiences[key];
 
+    if (!exp) return;
 
-    if (!exp)
-        return;
-
-
-    if (
-        pouredA &&
-        pouredB
-    ) {
+    if (pouredA && pouredB) {
 
         resultat.innerHTML = `
 
@@ -1567,7 +1670,6 @@ function updateResult() {
                 La transformation va commencer
                 automatiquement.
             </p>
-
         `;
     }
 }
@@ -1579,26 +1681,17 @@ function updateResult() {
 
 function startReaction() {
 
-    if (mixing)
-        return;
-
+    if (mixing) return;
 
     const key =
         experienceSelect.value;
 
-
     const exp =
         experiences[key];
 
+    if (!exp) return;
 
-    if (!exp)
-        return;
-
-
-    if (
-        !pouredA ||
-        !pouredB
-    ) {
+    if (!pouredA || !pouredB) {
 
         resultat.innerHTML = `
 
@@ -1608,37 +1701,28 @@ function startReaction() {
                 Verse d'abord les deux réactifs
                 dans le bécher.
             </p>
-
         `;
 
         return;
     }
 
-
     clearTimeout(
         autoReactionTimer
     );
 
+    mixing = true;
 
-    mixing =
-        true;
-
-
-    reaction =
-        exp;
-
+    reaction = exp;
 
     reactionStart =
         performance.now();
 
+    halfLifeReached = false;
 
-    halfLifeReached =
-        false;
-
-
-    infoState.textContent =
-        "Réaction en cours";
-
+    setText(
+        infoState,
+        "Réaction en cours"
+    );
 
     resultat.innerHTML = `
 
@@ -1699,179 +1783,163 @@ function startReaction() {
             ></div>
 
         </div>
-
     `;
 }
-
-
-// =====================================================
-// BOUTON MÉLANGER
-// =====================================================
-
-melangerButton.addEventListener(
-    "click",
-    function () {
-
-        if (!experienceSelect.value) {
-
-            resultat.innerHTML = `
-
-                <h3>⚠️</h3>
-
-                <p>
-                    Choisis d'abord une expérience.
-                </p>
-
-            `;
-
-            return;
-        }
-
-
-        if (
-            !pouredA ||
-            !pouredB
-        ) {
-
-            resultat.innerHTML = `
-
-                <h3>⚠️ Manipulation incomplète</h3>
-
-                <p>
-                    Il faut d'abord verser
-                    les deux réactifs.
-                </p>
-
-            `;
-
-            return;
-        }
-
-
-        startReaction();
-    }
-);
-
-
 // =====================================================
 // UPDATE REACTION
 // =====================================================
 
 function updateReaction() {
 
-    if (
-        !mixing ||
-        !reaction
-    )
-        return;
-
+    if (!mixing || !reaction) return;
 
     const elapsed =
-        (
-            performance.now() -
-            reactionStart
-        ) / 1000;
-
-
-    // Modèle pédagogique
-
-    const temperatureFactor =
-        Math.pow(
-            2,
-            (temperature - 25) / 10
-        );
-
-
-    const concentrationFactor =
-        concentration /
-        0.5;
-
-
-    const speedFactor =
-        concentrationFactor *
-        Math.sqrt(
-            temperatureFactor
-        );
-
+        (performance.now() - reactionStart) / 1000;
 
     const duration =
-        reaction.duration /
-        Math.max(
-            speedFactor,
-            0.1
-        );
-
+        reaction.duration;
 
     const progress =
         Math.min(
-            elapsed /
-            duration,
+            elapsed / duration,
             1
         );
 
+    // -----------------------------------------------
+    // FACTEUR DE VITESSE
+    // -----------------------------------------------
 
-    experimentTime.textContent =
-        elapsed.toFixed(2) +
-        " s";
+    const concentrationFactor =
+        Math.max(
+            0.35,
+            concentration
+        );
 
+    const temperatureFactor =
+        Math.max(
+            0.35,
+            1 + (temperature - 25) * 0.025
+        );
+
+    const relativeSpeed =
+        concentrationFactor *
+        temperatureFactor;
+
+
+    // -----------------------------------------------
+    // TEMPS
+    // -----------------------------------------------
 
     const timer =
         document.getElementById(
             "reactionTimer"
         );
 
-
-    if (timer) {
-
-        timer.textContent =
-            elapsed.toFixed(2);
-    }
-
-
     const percent =
         document.getElementById(
             "reactionPercent"
         );
-
-
-    if (percent) {
-
-        percent.textContent =
-            Math.round(
-                progress * 100
-            );
-    }
-
 
     const speed =
         document.getElementById(
             "relativeSpeed"
         );
 
+    const halfLife =
+        document.getElementById(
+            "halfLifeValue"
+        );
 
-    if (speed) {
-
-        speed.textContent =
-            speedFactor.toFixed(2);
-    }
-
-
-    const bar =
+    const progressBar =
         document.getElementById(
             "reactionProgress"
         );
 
 
-    if (bar) {
+    setText(
+        timer,
+        elapsed.toFixed(2)
+    );
 
-        bar.style.width =
-            progress * 100 + "%";
+
+    setText(
+        percent,
+        Math.round(progress * 100)
+    );
+
+
+    setText(
+        speed,
+        relativeSpeed.toFixed(2)
+    );
+
+
+    // -----------------------------------------------
+    // DEMI-VIE
+    // -----------------------------------------------
+
+    if (
+        progress >= 0.5 &&
+        !halfLifeReached
+    ) {
+
+        halfLifeReached = true;
+
+        setText(
+            halfLife,
+            elapsed.toFixed(2) + " s"
+        );
     }
 
 
-    // =================================================
-    // I- + S2O8
-    // =================================================
+    if (!halfLifeReached) {
+
+        setText(
+            halfLife,
+            "—"
+        );
+    }
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${progress * 100}%`;
+    }
+
+
+    // -----------------------------------------------
+    // INFOS BAS DE LABORATOIRE
+    // -----------------------------------------------
+
+    setText(
+        experimentTime,
+        elapsed.toFixed(2) + " s"
+    );
+
+
+    setText(
+        infoVolume,
+        volume + " mL"
+    );
+
+
+    setText(
+        infoConcentration,
+        concentration.toFixed(2) + " mol/L"
+    );
+
+
+    setText(
+        infoTemperature,
+        temperature + " °C"
+    );
+
+
+    // -----------------------------------------------
+    // CHANGEMENT DE COULEUR
+    // POUR I⁻ + S₂O₈²⁻
+    // -----------------------------------------------
 
     if (
         experienceSelect.value ===
@@ -1880,167 +1948,87 @@ function updateReaction() {
 
         const startColor =
             new THREE.Color(
-                0xddeeff
+                0xdcecff
             );
 
-
-        const iodineColor =
+        const endColor =
             new THREE.Color(
-                0x8f5412
+                0x5b301d
             );
 
+        const currentColor =
+            startColor.clone().lerp(
+                endColor,
+                progress
+            );
 
-        beakerLiquid.material.color.lerpColors(
-            startColor,
-            iodineColor,
-            progress
-        );
+        beakerLiquid.material.color =
+            currentColor;
 
-
-        // mouvement
-
-        beakerLiquid.rotation.y +=
-            0.02;
-
-
-        beakerLiquid.rotation.z =
-            Math.sin(
-                performance.now() * 0.006
-            ) * 0.02;
-
-
-        // t1/2
-
-        if (
-            progress >= 0.5 &&
-            !halfLifeReached
-        ) {
-
-            halfLifeReached =
-                true;
-
-
-            const halfLifeElement =
-                document.getElementById(
-                    "halfLifeValue"
-                );
-
-
-            if (
-                halfLifeElement
-            ) {
-
-                halfLifeElement.textContent =
-                    elapsed.toFixed(2) +
-                    " s";
-            }
-        }
+        beakerLiquid.material.opacity =
+            0.72 +
+            progress * 0.12;
     }
 
 
-    // =================================================
-    // GAZ
-    // =================================================
+    // -----------------------------------------------
+    // BUBBLES
+    // -----------------------------------------------
 
     if (
         reaction.gas &&
         Math.random() < 0.12
     ) {
 
-        createReactionBubble();
+        createBubble();
     }
 
 
-    // =================================================
+    // -----------------------------------------------
     // FIN
-    // =================================================
+    // -----------------------------------------------
 
-    if (
-        progress >= 1
-    ) {
+    if (progress >= 1) {
 
         finishReaction();
+
+        return;
     }
+
+
+    requestAnimationFrame(
+        updateReaction
+    );
 }
 
 
 // =====================================================
-// FIN REACTION
+// BUBBLE
 // =====================================================
 
-function finishReaction() {
+function createBubble() {
 
-    mixing =
-        false;
-
-
-    infoState.textContent =
-        "Terminé";
-
-
-    const finalHalfLife =
-        reaction.duration /
-        2;
-
-
-    resultat.innerHTML += `
-
-        <p
-            style="
-                color:#63d99a;
-                margin-top:12px;
-            "
-        >
-            ✅ Transformation terminée.
-        </p>
-
-        <p>
-            Le modèle représente
-            l'évolution temporelle
-            de la transformation.
-        </p>
-
-        <p>
-            <strong>
-                t₁/₂ ≈
-                ${finalHalfLife.toFixed(2)}
-                s
-            </strong>
-        </p>
-
-    `;
-
-
-    botMessage.textContent =
-        "Transformation terminée. Dans ce modèle pédagogique, une concentration plus élevée et une température plus élevée accélèrent la transformation.";
-}
-
-
-// =====================================================
-// BUBBLES
-// =====================================================
-
-function createReactionBubble() {
+    if (!beaker) return;
 
     const geometry =
         new THREE.SphereGeometry(
-            0.055,
+            0.035 +
+            Math.random() * 0.035,
             12,
             12
         );
 
 
     const material =
-        new THREE.MeshStandardMaterial({
+        new THREE.MeshPhysicalMaterial({
 
-            color:
-                0xffffff,
+            color: 0xffffff,
 
-            transparent:
-                true,
+            transparent: true,
 
-            opacity:
-                0.6
+            opacity: 0.42,
+
+            roughness: 0.05
         });
 
 
@@ -2053,27 +2041,208 @@ function createReactionBubble() {
 
     bubble.position.set(
 
-        (Math.random() - 0.5) * 1.8,
+        (Math.random() - 0.5) * 1.6,
 
-        -0.8,
+        -1.05,
 
-        (Math.random() - 0.5) * 0.8
+        (Math.random() - 0.5) * 1.3
 
     );
 
 
     bubble.userData.speed =
-        0.012 +
-        Math.random() * 0.02;
+        0.008 +
+        Math.random() * 0.018;
 
 
-    scene.add(
-        bubble
+    scene.add(bubble);
+
+    particles.push(bubble);
+}
+
+
+// =====================================================
+// UPDATE BUBBLES
+// =====================================================
+
+function updateParticles() {
+
+    for (
+        let i = particles.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const particle =
+            particles[i];
+
+        particle.position.y +=
+            particle.userData.speed;
+
+
+        particle.position.x +=
+            Math.sin(
+                particle.position.y * 3
+            ) * 0.0015;
+
+
+        if (
+            particle.position.y >
+            1.15
+        ) {
+
+            scene.remove(
+                particle
+            );
+
+            particles.splice(
+                i,
+                1
+            );
+        }
+    }
+
+
+    // Limite de sécurité
+
+    if (particles.length > 100) {
+
+        const old =
+            particles.shift();
+
+        scene.remove(old);
+    }
+}
+
+
+// =====================================================
+// FIN REACTION
+// =====================================================
+
+function finishReaction() {
+
+    mixing = false;
+
+    const exp =
+        reaction;
+
+    setText(
+        infoState,
+        "Transformation terminée"
     );
 
 
-    particles.push(
-        bubble
+    const timer =
+        document.getElementById(
+            "reactionTimer"
+        );
+
+    const percent =
+        document.getElementById(
+            "reactionPercent"
+        );
+
+    const speed =
+        document.getElementById(
+            "relativeSpeed"
+        );
+
+
+    setText(
+        timer,
+        exp.duration.toFixed(2) + " s"
+    );
+
+
+    setText(
+        percent,
+        "100"
+    );
+
+
+    setText(
+        speed,
+        "0"
+    );
+
+
+    resultat.innerHTML = `
+
+        <h3>✅ Transformation terminée</h3>
+
+        <p>
+            <strong>
+                ${exp.equation}
+            </strong>
+        </p>
+
+        <p>
+            <strong>Temps final :</strong>
+            ${exp.duration.toFixed(2)} s
+        </p>
+
+        <p>
+            <strong>Avancement :</strong>
+            100 %
+        </p>
+
+        <p>
+            <strong>t₁/₂ :</strong>
+            ${
+                halfLifeReached
+                    ? "atteint pendant la transformation"
+                    : "—"
+            }
+        </p>
+
+        <p>
+            ${exp.explanation}
+        </p>
+    `;
+
+
+    if (botMessage) {
+
+        botMessage.textContent =
+            "La transformation est terminée. Observe les résultats.";
+    }
+}
+
+
+// =====================================================
+// MELANGER BUTTON
+// =====================================================
+
+if (melangerButton) {
+
+    melangerButton.addEventListener(
+        "click",
+        function () {
+
+            if (
+                pouredA &&
+                pouredB &&
+                !mixing
+            ) {
+
+                startReaction();
+
+            } else {
+
+                if (resultat) {
+
+                    resultat.innerHTML = `
+
+                        <h3>⚠️ Mélange impossible</h3>
+
+                        <p>
+                            Verse d'abord les deux
+                            réactifs dans le bécher.
+                        </p>
+                    `;
+                }
+            }
+        }
     );
 }
 
@@ -2089,39 +2258,26 @@ function resetLab() {
     );
 
 
-    mixing =
-        false;
+    mixing = false;
+
+    reaction = null;
+
+    pouredA = false;
+
+    pouredB = false;
+
+    pouringA = false;
+
+    pouringB = false;
+
+    beakerVolume = 0;
+
+    halfLifeReached = false;
 
 
-    reaction =
-        null;
-
-
-    pouredA =
-        false;
-
-
-    pouredB =
-        false;
-
-
-    pouringA =
-        false;
-
-
-    pouringB =
-        false;
-
-
-    beakerVolume =
-        0;
-
-
-    halfLifeReached =
-        false;
-
-
-    // BOTTLE A
+    // -----------------------------------------------
+    // RESET BOTTLES
+    // -----------------------------------------------
 
     if (bottleA) {
 
@@ -2129,29 +2285,22 @@ function resetLab() {
             bottleA.userData.originalPosition
         );
 
-
-        bottleA.rotation.z =
-            0;
-
+        bottleA.rotation.z = 0;
 
         const liquidA =
             bottleA.getObjectByName(
                 "liquid"
             );
 
-
         if (liquidA) {
 
-            liquidA.scale.y =
-                1;
+            liquidA.scale.y = 1;
 
             liquidA.position.y =
-                -0.2;
+                -0.18;
         }
     }
 
-
-    // BOTTLE B
 
     if (bottleB) {
 
@@ -2159,69 +2308,46 @@ function resetLab() {
             bottleB.userData.originalPosition
         );
 
-
-        bottleB.rotation.z =
-            0;
-
+        bottleB.rotation.z = 0;
 
         const liquidB =
             bottleB.getObjectByName(
                 "liquid"
             );
 
-
         if (liquidB) {
 
-            liquidB.scale.y =
-                1;
+            liquidB.scale.y = 1;
 
             liquidB.position.y =
-                -0.2;
+                -0.18;
         }
     }
 
 
-    // BEAKER
+    // -----------------------------------------------
+    // RESET BEAKER
+    // -----------------------------------------------
 
     if (beakerLiquid) {
+
+        beakerLiquid.scale.y = 1;
+
+        beakerLiquid.position.y =
+            -1.15;
 
         beakerLiquid.material.color.set(
             0xddeeff
         );
 
-
-        beakerLiquid.scale.y =
-            1;
-
-
-        beakerLiquid.position.y =
-            -1.15;
-
-
-        beakerLiquid.rotation.set(
-            0,
-            0,
-            0
-        );
+        beakerLiquid.material.opacity =
+            0.82;
     }
 
 
-    // PARTICLES
-
-    particles.forEach(
-        particle => {
-
-            scene.remove(
-                particle
-            );
-        }
-    );
-
-
-    particles = [];
-
-
-    // STREAMS
+    // -----------------------------------------------
+    // REMOVE STREAMS
+    // -----------------------------------------------
 
     pourStreams.forEach(
         stream => {
@@ -2232,41 +2358,93 @@ function resetLab() {
         }
     );
 
-
     pourStreams = [];
 
 
-    infoState.textContent =
-        "Prêt";
+    // -----------------------------------------------
+    // REMOVE PARTICLES
+    // -----------------------------------------------
+
+    particles.forEach(
+        particle => {
+
+            scene.remove(
+                particle
+            );
+        }
+    );
+
+    particles = [];
 
 
-    experimentTime.textContent =
-        "0.00 s";
+    setText(
+        infoState,
+        "Prêt"
+    );
 
 
-    if (materialA)
-        materialA.textContent =
-            "—";
+    setText(
+        experimentTime,
+        "0.00 s"
+    );
 
 
-    if (materialB)
-        materialB.textContent =
-            "—";
+    setText(
+        infoVolume,
+        volume + " mL"
+    );
 
 
-    resultat.innerHTML = `
-
-        <h3>Résultat</h3>
-
-        <p>
-            Choisis une expérience.
-        </p>
-
-    `;
+    setText(
+        infoConcentration,
+        concentration.toFixed(2) +
+        " mol/L"
+    );
 
 
-    botMessage.textContent =
-        "Choisis une expérience.";
+    setText(
+        infoTemperature,
+        temperature + " °C"
+    );
+
+
+    if (resultat) {
+
+        resultat.innerHTML = `
+
+            <h3>🧪 Laboratoire prêt</h3>
+
+            <p>
+                Prends les deux réactifs
+                et verse-les dans le bécher.
+            </p>
+        `;
+    }
+
+
+    const key =
+        experienceSelect.value;
+
+    const exp =
+        experiences[key];
+
+
+    if (exp) {
+
+        if (materialA)
+            materialA.textContent = exp.A;
+
+        if (materialB)
+            materialB.textContent = exp.B;
+
+        setText(
+            botMessage,
+            exp.explanation
+        );
+    }
+
+
+    updateBottleAppearance();
 }
 
 
@@ -2274,133 +2452,93 @@ function resetLab() {
 // RESET BUTTON
 // =====================================================
 
-resetButton.addEventListener(
-    "click",
-    function () {
+if (resetButton) {
 
-        resetLab();
-
-
-        if (
-            experienceSelect.value
-        ) {
-
-            const exp =
-                experiences[
-                experienceSelect.value
-                ];
+    resetButton.addEventListener(
+        "click",
+        resetLab
+    );
+}
 
 
-            materialA.textContent =
-                exp.A;
+// =====================================================
+// SLIDERS
+// =====================================================
 
+if (volumeSlider) {
 
-            materialB.textContent =
-                exp.B;
+    volumeSlider.addEventListener(
+        "input",
+        function () {
 
+            volume =
+                Number(
+                    volumeSlider.value
+                );
 
-            updateBottleAppearance();
+            setText(
+                volumeValue,
+                volume + " mL"
+            );
 
-
-            botMessage.textContent =
-                exp.explanation;
-
-
-            resultat.innerHTML = `
-
-                <h3>🧪 ${exp.name}</h3>
-
-                <p>
-                    <strong>Équation :</strong>
-                </p>
-
-                <p>
-                    ${exp.equation}
-                </p>
-
-                <p>
-                    Expérience réinitialisée.
-                </p>
-
-            `;
+            setText(
+                infoVolume,
+                volume + " mL"
+            );
         }
-    }
-);
+    );
+}
 
 
-// =====================================================
-// SLIDER VOLUME
-// =====================================================
+if (concentrationSlider) {
 
-volumeSlider.addEventListener(
-    "input",
-    function () {
+    concentrationSlider.addEventListener(
+        "input",
+        function () {
 
-        volume =
-            Number(
-                volumeSlider.value
+            concentration =
+                Number(
+                    concentrationSlider.value
+                );
+
+            setText(
+                concentrationValue,
+                concentration.toFixed(2)
             );
 
-
-        volumeValue.textContent =
-            volume;
-
-
-        infoVolume.textContent =
-            volume +
-            " mL";
-    }
-);
+            setText(
+                infoConcentration,
+                concentration.toFixed(2) +
+                " mol/L"
+            );
+        }
+    );
+}
 
 
-// =====================================================
-// SLIDER CONCENTRATION
-// =====================================================
+if (temperatureSlider) {
 
-concentrationSlider.addEventListener(
-    "input",
-    function () {
+    temperatureSlider.addEventListener(
+        "input",
+        function () {
 
-        concentration =
-            Number(
-                concentrationSlider.value
+            temperature =
+                Number(
+                    temperatureSlider.value
+                );
+
+            setText(
+                temperatureValue,
+                temperature + " °C"
             );
 
-
-        concentrationValue.textContent =
-            concentration.toFixed(2);
-
-
-        infoConcentration.textContent =
-            concentration.toFixed(2) +
-            " M";
-    }
-);
-
-
-// =====================================================
-// SLIDER TEMPERATURE
-// =====================================================
-
-temperatureSlider.addEventListener(
-    "input",
-    function () {
-
-        temperature =
-            Number(
-                temperatureSlider.value
+            setText(
+                infoTemperature,
+                temperature + " °C"
             );
-
-
-        temperatureValue.textContent =
-            temperature;
-
-
-        infoTemperature.textContent =
-            temperature +
-            " °C";
-    }
-);
+        }
+    );
+}
 
 
 // =====================================================
@@ -2414,41 +2552,9 @@ function animate() {
     );
 
 
-    updateReaction();
-
-
     updatePourStreams();
 
-
-    particles.forEach(
-        particle => {
-
-            particle.position.y +=
-                particle.userData.speed;
-        }
-    );
-
-
-    particles =
-        particles.filter(
-            particle => {
-
-                if (
-                    particle.position.y > 2
-                ) {
-
-                    scene.remove(
-                        particle
-                    );
-
-                    return false;
-                }
-
-
-                return true;
-            }
-        );
-
+    updateParticles();
 
     renderer.render(
         scene,
@@ -2465,21 +2571,27 @@ window.addEventListener(
     "resize",
     function () {
 
-        if (!camera || !renderer)
-            return;
+        if (!container) return;
+
+        const width =
+            container.clientWidth;
+
+        const height =
+            Math.max(
+                container.clientHeight,
+                400
+            );
 
 
         camera.aspect =
-            container.clientWidth /
-            container.clientHeight;
-
+            width / height;
 
         camera.updateProjectionMatrix();
 
 
         renderer.setSize(
-            container.clientWidth,
-            container.clientHeight
+            width,
+            height
         );
     }
 );
@@ -2490,3 +2602,36 @@ window.addEventListener(
 // =====================================================
 
 init();
+
+
+// =====================================================
+// INITIAL EXPERIENCE
+// =====================================================
+
+if (experienceSelect) {
+
+    const key =
+        experienceSelect.value ||
+        "iodure_persulfate";
+
+    const exp =
+        experiences[key];
+
+    if (exp) {
+
+        if (materialA)
+            materialA.textContent = exp.A;
+
+        if (materialB)
+            materialB.textContent = exp.B;
+
+        setText(
+            botMessage,
+            exp.explanation
+        );
+    }
+}
+
+updateBottleAppearance();
+
+resetLab();
